@@ -110,6 +110,9 @@ public sealed class MapLikeSerializer<Key, Value, Collection, Builder : MutableM
         } else {
             decoder.decodeSerializableElement(descriptor, vIndex, valueSerializer)
         }
+        if (key in builder) {
+            throw RepeatedMapKeyException()
+        }
         builder[key] = value
     }
 
