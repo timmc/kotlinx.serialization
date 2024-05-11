@@ -138,4 +138,4 @@ internal constructor(message: String?) : SerializationException(message) {
  * Thrown when a map deserializer encounters a repeated map key (and configuration disallows this.)
  */
 @ExperimentalSerializationApi
-public class RepeatedMapKeyException() : SerializationException("Duplicate keys not allowed in maps")
+public class DuplicateMapKeyException() : SerializationException("Duplicate keys not allowed in maps")

@@ -111,7 +111,7 @@ public sealed class MapLikeSerializer<Key, Value, Collection, Builder : MutableM
             decoder.decodeSerializableElement(descriptor, vIndex, valueSerializer)
         }
         if (key in builder) {
-            throw RepeatedMapKeyException()
+            throw DuplicateMapKeyException()
         }
         builder[key] = value
     }
