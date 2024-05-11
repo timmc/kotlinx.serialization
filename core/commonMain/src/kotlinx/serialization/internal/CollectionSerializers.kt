@@ -254,10 +254,10 @@ internal class HashSetSerializer<E>(
 
 @PublishedApi
 internal class LinkedHashMapSerializer<K, V>(
-    kSerializer: KSerializer<K>, vSerializer: KSerializer<V>
+    kSerializer: KSerializer<K>, vSerializer: KSerializer<V>, allowDuplicateKeys: Boolean,
 ) : MapLikeSerializer<K, V, Map<K, V>, LinkedHashMap<K, V>>(kSerializer, vSerializer) {
 
-    override val descriptor: MapLikeDescriptor = LinkedHashMapClassDesc(kSerializer.descriptor, vSerializer.descriptor)
+    override val descriptor: MapLikeDescriptor = LinkedHashMapClassDesc(kSerializer.descriptor, vSerializer.descriptor, allowDuplicateKeys)
     override fun Map<K, V>.collectionSize(): Int = size
     override fun Map<K, V>.collectionIterator(): Iterator<Map.Entry<K, V>> = iterator()
     override fun builder(): LinkedHashMap<K, V> = LinkedHashMap()
@@ -270,10 +270,10 @@ internal class LinkedHashMapSerializer<K, V>(
 
 @PublishedApi
 internal class HashMapSerializer<K, V>(
-    kSerializer: KSerializer<K>, vSerializer: KSerializer<V>
+    kSerializer: KSerializer<K>, vSerializer: KSerializer<V>, allowDuplicateKeys: Boolean,
 ) : MapLikeSerializer<K, V, Map<K, V>, HashMap<K, V>>(kSerializer, vSerializer) {
 
-    override val descriptor: MapLikeDescriptor = HashMapClassDesc(kSerializer.descriptor, vSerializer.descriptor)
+    override val descriptor: MapLikeDescriptor = HashMapClassDesc(kSerializer.descriptor, vSerializer.descriptor, allowDuplicateKeys)
     override fun Map<K, V>.collectionSize(): Int = size
     override fun Map<K, V>.collectionIterator(): Iterator<Map.Entry<K, V>> = iterator()
     override fun builder(): HashMap<K, V> = HashMap()

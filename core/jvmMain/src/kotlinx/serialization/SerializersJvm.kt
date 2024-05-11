@@ -120,7 +120,8 @@ private fun SerializersModule.serializerByJavaTypeImpl(
                 ) as KSerializer<Any>
                 Map::class.java.isAssignableFrom(rootClass) -> MapSerializer(
                     argsSerializers[0],
-                    argsSerializers[1]
+                    argsSerializers[1],
+                    allowDuplicateKeys,
                 ) as KSerializer<Any>
                 Map.Entry::class.java.isAssignableFrom(rootClass) -> MapEntrySerializer(
                     argsSerializers[0],

@@ -51,7 +51,7 @@ public sealed class MapLikeDescriptor(
     override val serialName: String,
     public val keyDescriptor: SerialDescriptor,
     public val valueDescriptor: SerialDescriptor,
-    public val allowDuplicateKeys: Boolean = false,
+    public val allowDuplicateKeys: Boolean,
 ) : SerialDescriptor {
     override val kind: SerialKind get() = StructureKind.MAP
     override val elementsCount: Int = 2
@@ -132,8 +132,8 @@ internal class HashSetClassDesc(elementDesc: SerialDescriptor) : ListLikeDescrip
     override val serialName: String get() = HASH_SET_NAME
 }
 
-internal class LinkedHashMapClassDesc(keyDesc: SerialDescriptor, valueDesc: SerialDescriptor) :
-    MapLikeDescriptor(LINKED_HASH_MAP_NAME, keyDesc, valueDesc)
+internal class LinkedHashMapClassDesc(keyDesc: SerialDescriptor, valueDesc: SerialDescriptor, allowDuplicateKeys: Boolean) :
+    MapLikeDescriptor(LINKED_HASH_MAP_NAME, keyDesc, valueDesc, allowDuplicateKeys)
 
-internal class HashMapClassDesc(keyDesc: SerialDescriptor, valueDesc: SerialDescriptor) :
-    MapLikeDescriptor(HASH_MAP_NAME, keyDesc, valueDesc)
+internal class HashMapClassDesc(keyDesc: SerialDescriptor, valueDesc: SerialDescriptor, allowDuplicateKeys: Boolean) :
+    MapLikeDescriptor(HASH_MAP_NAME, keyDesc, valueDesc, allowDuplicateKeys)

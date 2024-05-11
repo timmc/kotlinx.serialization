@@ -183,17 +183,18 @@ public inline fun <reified T> listSerialDescriptor(): SerialDescriptor {
 @ExperimentalSerializationApi
 public fun mapSerialDescriptor(
     keyDescriptor: SerialDescriptor,
-    valueDescriptor: SerialDescriptor
+    valueDescriptor: SerialDescriptor,
+    allowDuplicateKeys: Boolean,
 ): SerialDescriptor {
-    return HashMapClassDesc(keyDescriptor, valueDescriptor)
+    return HashMapClassDesc(keyDescriptor, valueDescriptor, allowDuplicateKeys)
 }
 
 /**
  * Creates a descriptor for the type `Map<K, V>`.
  */
 @ExperimentalSerializationApi
-public inline fun <reified K, reified V> mapSerialDescriptor(): SerialDescriptor {
-    return mapSerialDescriptor(serializer<K>().descriptor, serializer<V>().descriptor)
+public inline fun <reified K, reified V> mapSerialDescriptor(allowDuplicateKeys: Boolean): SerialDescriptor {
+    return mapSerialDescriptor(serializer<K>().descriptor, serializer<V>().descriptor, allowDuplicateKeys)
 }
 
 /**

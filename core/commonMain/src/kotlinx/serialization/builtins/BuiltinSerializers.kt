@@ -220,8 +220,9 @@ public fun <T> SetSerializer(elementSerializer: KSerializer<T>): KSerializer<Set
  */
 public fun <K, V> MapSerializer(
     keySerializer: KSerializer<K>,
-    valueSerializer: KSerializer<V>
-): KSerializer<Map<K, V>> = LinkedHashMapSerializer(keySerializer, valueSerializer)
+    valueSerializer: KSerializer<V>,
+    allowDuplicateKeys: Boolean,
+): KSerializer<Map<K, V>> = LinkedHashMapSerializer(keySerializer, valueSerializer, allowDuplicateKeys)
 
 /**
  * Returns serializer for [UInt].

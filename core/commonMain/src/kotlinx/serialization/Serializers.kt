@@ -224,7 +224,7 @@ private fun SerializersModule.serializerByKTypeImpl(
     } else {
         val serializers = serializersForParameters(typeArguments, failOnMissingTypeArgSerializer) ?: return null
         // first, we look among the built-in serializers, because the parameter could be contextual
-        rootClass.parametrizedSerializerOrNull(serializers) { typeArguments[0].classifier }
+        rootClass.parametrizedSerializerOrNull(serializers, allowDuplicateKeys) { typeArguments[0].classifier }
             ?: getContextual(rootClass, serializers)
             // PolymorphicSerializer always is returned even for Interface<T>, although it rarely works as expected.
             ?: rootClass.polymorphicIfInterface()
@@ -242,7 +242,7 @@ private fun SerializersModule.serializerByKClassImpl(
         rootClass.serializerOrNull() ?: getContextual(rootClass)
     } else {
         try {
-            rootClass.parametrizedSerializerOrNull(typeArgumentsSerializers) {
+            rootClass.parametrizedSerializerOrNull(typeArgumentsSerializers, allowDuplicateKeys) {
                 throw SerializationException("It is not possible to retrieve an array serializer using KClass alone, use KType instead or ArraySerializer factory")
             } ?: getContextual(
                 rootClass,
@@ -323,10 +323,11 @@ public fun <T : Any> KClass<T>.serializerOrNull(): KSerializer<T>? =
 
 internal fun KClass<Any>.parametrizedSerializerOrNull(
     serializers: List<KSerializer<Any?>>,
-    elementClassifierIfArray: () -> KClassifier?
+    allowDuplicateKeys: Boolean,
+    elementClassifierIfArray: () -> KClassifier?,
 ): KSerializer<out Any>? {
     // builtin first because some standard parametrized interfaces (e.g. Map) must use builtin serializer but not polymorphic
-    return builtinParametrizedSerializer(serializers, elementClassifierIfArray) ?: compiledParametrizedSerializer(serializers)
+    return builtinParametrizedSerializer(serializers, allowDuplicateKeys, elementClassifierIfArray) ?: compiledParametrizedSerializer(serializers)
 }
 
 
@@ -337,16 +338,18 @@ private fun KClass<Any>.compiledParametrizedSerializer(serializers: List<KSerial
 @OptIn(ExperimentalSerializationApi::class)
 private fun KClass<Any>.builtinParametrizedSerializer(
     serializers: List<KSerializer<Any?>>,
-    elementClassifierIfArray: () -> KClassifier?
+    allowDuplicateKeys: Boolean,
+    elementClassifierIfArray: () -> KClassifier?,
 ): KSerializer<out Any>? {
     return when (this) {
         Collection::class, List::class, MutableList::class, ArrayList::class -> ArrayListSerializer(serializers[0])
         HashSet::class -> HashSetSerializer(serializers[0])
         Set::class, MutableSet::class, LinkedHashSet::class -> LinkedHashSetSerializer(serializers[0])
-        HashMap::class -> HashMapSerializer(serializers[0], serializers[1])
+        HashMap::class -> HashMapSerializer(serializers[0], serializers[1], allowDuplicateKeys)
         Map::class, MutableMap::class, LinkedHashMap::class -> LinkedHashMapSerializer(
             serializers[0],
-            serializers[1]
+            serializers[1],
+            allowDuplicateKeys,
         )
 
         Map.Entry::class -> MapEntrySerializer(serializers[0], serializers[1])

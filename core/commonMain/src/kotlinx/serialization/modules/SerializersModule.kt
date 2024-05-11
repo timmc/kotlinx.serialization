@@ -70,6 +70,8 @@ public sealed class SerializersModule {
 
     @InternalSerializationApi
     internal abstract val hasInterfaceContextualSerializers: Boolean
+
+    public val allowDuplicateKeys: Boolean = false
 }
 
 /**

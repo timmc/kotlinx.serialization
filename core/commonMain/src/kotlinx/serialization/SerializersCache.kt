@@ -32,8 +32,9 @@ private val SERIALIZERS_CACHE_NULLABLE = createCache<Any?> { (it.serializerOrNul
  */
 @ThreadLocal
 private val PARAMETRIZED_SERIALIZERS_CACHE = createParametrizedCache { clazz, types ->
-    val serializers = EmptySerializersModule().serializersForParameters(types, true)!!
-    clazz.parametrizedSerializerOrNull(serializers) { types[0].classifier }
+    val empty = EmptySerializersModule()
+    val serializers = empty.serializersForParameters(types, true)!!
+    clazz.parametrizedSerializerOrNull(serializers, empty.allowDuplicateKeys) { types[0].classifier }
 }
 
 /**
@@ -41,8 +42,9 @@ private val PARAMETRIZED_SERIALIZERS_CACHE = createParametrizedCache { clazz, ty
  */
 @ThreadLocal
 private val PARAMETRIZED_SERIALIZERS_CACHE_NULLABLE = createParametrizedCache<Any?> { clazz, types ->
-    val serializers = EmptySerializersModule().serializersForParameters(types, true)!!
-    clazz.parametrizedSerializerOrNull(serializers) { types[0].classifier }?.nullable?.cast()
+    val empty = EmptySerializersModule()
+    val serializers = empty.serializersForParameters(types, true)!!
+    clazz.parametrizedSerializerOrNull(serializers, empty.allowDuplicateKeys) { types[0].classifier }?.nullable?.cast()
 }
 
 /**
