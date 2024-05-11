@@ -88,7 +88,7 @@ public sealed class MapLikeSerializer<Key, Value, Collection, Builder : MutableM
 ) : AbstractCollectionSerializer<Map.Entry<Key, Value>, Collection, Builder>() {
 
     protected abstract fun Builder.insertKeyValuePair(index: Int, key: Key, value: Value)
-    abstract override val descriptor: SerialDescriptor
+    abstract override val descriptor: MapLikeDescriptor
 
     protected final override fun readAll(decoder: CompositeDecoder, builder: Builder, startIndex: Int, size: Int) {
         require(size >= 0) { "Size must be known in advance when using READ_ALL" }
@@ -110,7 +110,7 @@ public sealed class MapLikeSerializer<Key, Value, Collection, Builder : MutableM
         } else {
             decoder.decodeSerializableElement(descriptor, vIndex, valueSerializer)
         }
-        if (key in builder) {
+        if (!descriptor.allowDuplicateKeys && (key in builder)) {
             throw DuplicateMapKeyException()
         }
         builder[key] = value
@@ -257,7 +257,7 @@ internal class LinkedHashMapSerializer<K, V>(
     kSerializer: KSerializer<K>, vSerializer: KSerializer<V>
 ) : MapLikeSerializer<K, V, Map<K, V>, LinkedHashMap<K, V>>(kSerializer, vSerializer) {
 
-    override val descriptor: SerialDescriptor = LinkedHashMapClassDesc(kSerializer.descriptor, vSerializer.descriptor)
+    override val descriptor: MapLikeDescriptor = LinkedHashMapClassDesc(kSerializer.descriptor, vSerializer.descriptor)
     override fun Map<K, V>.collectionSize(): Int = size
     override fun Map<K, V>.collectionIterator(): Iterator<Map.Entry<K, V>> = iterator()
     override fun builder(): LinkedHashMap<K, V> = LinkedHashMap()
@@ -273,7 +273,7 @@ internal class HashMapSerializer<K, V>(
     kSerializer: KSerializer<K>, vSerializer: KSerializer<V>
 ) : MapLikeSerializer<K, V, Map<K, V>, HashMap<K, V>>(kSerializer, vSerializer) {
 
-    override val descriptor: SerialDescriptor = HashMapClassDesc(kSerializer.descriptor, vSerializer.descriptor)
+    override val descriptor: MapLikeDescriptor = HashMapClassDesc(kSerializer.descriptor, vSerializer.descriptor)
     override fun Map<K, V>.collectionSize(): Int = size
     override fun Map<K, V>.collectionIterator(): Iterator<Map.Entry<K, V>> = iterator()
     override fun builder(): HashMap<K, V> = HashMap()

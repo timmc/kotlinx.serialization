@@ -46,10 +46,12 @@ internal sealed class ListLikeDescriptor(val elementDescriptor: SerialDescriptor
     override fun toString(): String = "$serialName($elementDescriptor)"
 }
 
-internal sealed class MapLikeDescriptor(
+@InternalSerializationApi
+public sealed class MapLikeDescriptor(
     override val serialName: String,
-    val keyDescriptor: SerialDescriptor,
-    val valueDescriptor: SerialDescriptor
+    public val keyDescriptor: SerialDescriptor,
+    public val valueDescriptor: SerialDescriptor,
+    public val allowDuplicateKeys: Boolean = false,
 ) : SerialDescriptor {
     override val kind: SerialKind get() = StructureKind.MAP
     override val elementsCount: Int = 2
